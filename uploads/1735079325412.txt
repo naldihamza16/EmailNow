@@ -1,0 +1,118 @@
+export const installServer = async (req, res) => {
+  const { ip, username, password, rpmFilePath } = req.body;
+
+  try {
+      // Step 1: Connect to the server
+      console.log("Connecting to the server...");
+      await ssh.connect({
+          host: ip,
+          username,
+          password,
+          readyTimeout: 30000,
+      });
+
+      console.log("Connected to the server successfully.");
+
+      // Step 2: Ensure 'dnf' is available on the server
+      console.log("Checking if 'dnf' is available...");
+      const checkDnfCommand = `command -v dnf`;
+      const checkDnfResult = await ssh.execCommand(checkDnfCommand);
+
+      if (checkDnfResult.stderr) {
+          throw new Error("The 'dnf' package manager is not available on this server.");
+      }
+      console.log("'dnf' is available on the server.");
+
+      // Step 3: Check if the RPM file already exists on the server
+      const rpmFilePath = "C:/Users/HP-G4/Desktop/EmailNow/backend/controllers/tmp/pmta/rpms"; // Local path to the RPM file
+      const remoteRpmPath = "/tmp/pmta/rpms/pmta64.rpm"; // Remote path to upload the RPM file to
+      
+      console.log("Checking if the RPM file already exists on the server...");
+      const checkFileCommand = `[ -f "${remoteRpmPath}" ] && echo "exists" || echo "not found"`;
+      const checkFileResult = await ssh.execCommand(checkFileCommand);
+      
+      // Check if the file exists on the remote server
+      if (checkFileResult.stdout.trim() === "exists") {
+          console.log("PowerMTA RPM file already exists on the server. Skipping upload.");
+      } else {
+          // Upload the RPM file to the server if it doesn't exist
+          console.log("RPM file not found. Uploading...");
+          
+          // Ensure the remote directory exists
+          await ssh.execCommand("mkdir -p /tmp/pmta/rpms/");
+          
+          await ssh.putFile(rpmFilePath, remoteRpmPath, null, {
+              concurrency: 1,
+              step: (transferred, chunk, total) => {
+                  process.stdout.write(`Progress: ${((transferred / total) * 100).toFixed(2)}%\r`);
+              },
+          });
+          console.log("\nUploaded PowerMTA RPM file successfully.");
+      }
+
+      // Step 4: Remove any older PowerMTA installations
+      console.log("Removing any existing PowerMTA installations...");
+      const removeOldPmtaCommand = `sudo dnf remove -y powermta`;
+      const removeOldPmtaResult = await ssh.execCommand(removeOldPmtaCommand);
+
+      if (removeOldPmtaResult.stderr) {
+          console.warn(`Warning: Issue removing old PowerMTA (if installed): ${removeOldPmtaResult.stderr}`);
+      } else {
+          console.log("Old PowerMTA installations removed successfully.");
+      }
+
+      // Step 5: Install PowerMTA 4 from the new RPM file
+      console.log("Installing PowerMTA 4...");
+      const installCommand = `sudo dnf install -y ${remoteRpmPath}`;
+      const installResult = await ssh.execCommand(installCommand);
+
+      if (installResult.stderr) {
+          throw new Error(`Error installing PowerMTA: ${installResult.stderr}`);
+      }
+      console.log("PowerMTA 4 installed successfully.");
+
+      // Step 6: Copy license and config files to `/etc/pmta/`
+      console.log("Copying license and config files to /etc/pmta/...");
+      const copyFilesCommand = `
+          sudo mkdir -p /etc/pmta &&
+          sudo cp /tmp/pmta/rpms/license /etc/pmta/ &&
+          sudo cp /tmp/pmta/rpms/config /etc/pmta/
+      `;
+      const copyFilesResult = await ssh.execCommand(copyFilesCommand);
+
+      if (copyFilesResult.stderr) {
+          throw new Error(`Error copying license or config files: ${copyFilesResult.stderr}`);
+      }
+      console.log("License and config files copied successfully to /etc/pmta/.");
+
+      // Step 7: Restart PowerMTA services
+      console.log("Restarting PowerMTA services...");
+      const restartCommands = `
+          sudo systemctl restart pmta &&
+          sudo systemctl restart pmtahttp
+      `;
+      const restartResult = await ssh.execCommand(restartCommands);
+
+      if (restartResult.stderr) {
+          throw new Error(`Error restarting PowerMTA services: ${restartResult.stderr}`);
+      }
+      console.log("PowerMTA services restarted successfully.");
+
+      // Step 8: Return success response
+      return res.status(200).json({
+          success: true,
+          message: "PowerMTA 4 installed, configured, and services restarted successfully on AlmaLinux 8.10.",
+      });
+  } catch (error) {
+      console.error("Error during installation:", error.message);
+
+      return res.status(500).json({
+          success: false,
+          message: "Failed to install, configure, or restart PowerMTA 4 services on AlmaLinux 8.10.",
+          error: error.message,
+      });
+  } finally {
+      // Close the SSH connection
+      ssh.dispose();
+  }
+};

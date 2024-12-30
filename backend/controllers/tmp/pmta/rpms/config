@@ -1,0 +1,103 @@
+#
+# $Id: config 14068 2012-08-13 13:51:15Z avinash $
+# Sample PowerMTA configuration file
+#
+
+#
+# E-mail address for mailer's administrator (please specify!)
+#
+#postmaster you@your.domain
+
+#
+# IP address(es) and port(s) on which to listen for incoming SMTP connections
+#
+smtp-listener 0/0:25        # listens on all local IPs
+smtp-listener 0/0:587
+smtp-listener 0/0:465
+
+#
+# Settings per source IP address (for incoming SMTP connections)
+#
+<source 0/0>
+    always-allow-relaying yes
+    log-connections no
+    log-commands no
+    log-data no
+</source>
+
+<source 0/0>                 # matches all
+    log-connections no
+    log-commands    no       # WARNING: verbose!
+    log-data        no       # WARNING: even more verbose!
+</source>
+
+#
+# SMTP users (authenticated via SMTP AUTH)
+#
+<smtp-user root>
+    password "123456"
+</smtp-user>
+
+#
+# Settings per outgoing domain
+#
+
+#
+#<domain test.port25.com>
+#    max-smtp-out    1
+#    log-connections yes
+#    log-commands    yes     # WARNING: verbose!
+#    log-resolution  no      # WARNING: verbose!
+#    log-data        no      # WARNING: even more verbose!
+#</domain>
+
+<domain alaoui.com>
+    max-smtp-out    800
+    route           [37.97.203.249]:587  # bypasses DNS resolution
+    max-smtp-out    20       # max. connections per domain
+    bounce-after    4d12h    # 4 days, 12 hours
+    retry-after     10m      # 10 minutes
+</domain>
+
+#
+# Port used for HTTP management interface
+#
+http-mgmt-port 8080
+
+#
+# IP addresses allowed to access the HTTP management interface, one
+# per line
+#
+http-access 127.0.0.1 monitor
+http-access ::1 monitor
+#http-access 10.1.0.10 none
+http-access 0/0 admin
+
+#
+# Whether to run the PowerMTA deamon as root
+#
+run-as-root no
+
+#
+# Logging file name
+#
+log-file /var/log/pmta/pmta.log   # logrotate is used for rotation
+
+#
+# Accounting file(s)
+#
+<acct-file /var/log/pmta/acct.csv>
+#    move-to /opt/myapp/pmta-acct   # configure as fit for your application
+    move-interval 5m
+    max-size 50M
+    delete-after 8d
+</acct-file>
+
+#
+# Spool directories
+#
+<spool /var/spool/pmta>
+    deliver-only no
+</spool>
+
+# EOF
