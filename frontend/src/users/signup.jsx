@@ -26,7 +26,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_URL}/api/users/signup`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_URL}api/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

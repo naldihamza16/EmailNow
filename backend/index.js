@@ -16,12 +16,15 @@ const port = process.env.PORT || 1444;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: 'https://email-now-oj75.vercel.app', // Allow your frontend domain
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  credentials: true, // Allow credentials (cookies, authentication)
+  optionsSuccessStatus: 200 // For legacy browsers (like IE11)
+};
 
-// Handle favicon requests
-app.get("/favicon.ico", (req, res) => {
-    res.status(204).send();  // Respond with no content for the favicon
-});
+app.use(cors(corsOptions));
 
 // Serve files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
