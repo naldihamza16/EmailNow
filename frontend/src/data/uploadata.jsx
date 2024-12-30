@@ -25,7 +25,7 @@ const UploadData = () => {
 
     try {
       setUploading(true);
-      const response = await fetch('http://localhost:1444/api/data/uploaddata', {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_URL}/api/data/uploaddata`, {
         method: 'POST',
         body: formData,
       });
