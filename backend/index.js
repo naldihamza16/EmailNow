@@ -18,7 +18,7 @@ const __dirname = path.dirname(__filename);
 
 // CORS configuration
 const corsOptions = {
-  origin: 'https://email-now-oj75.vercel.app', // Allow your frontend domain
+  origin: 'https://email-now-lqko.vercel.app', // Allow your frontend domain
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   credentials: true, // Allow credentials (cookies, authentication)
   optionsSuccessStatus: 200 // For legacy browsers (like IE11)
