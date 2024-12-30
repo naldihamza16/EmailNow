@@ -18,6 +18,11 @@ const __dirname = path.dirname(__filename);
 
 app.use(cors());
 
+// Handle favicon requests
+app.get("/favicon.ico", (req, res) => {
+    res.status(204).send();  // Respond with no content for the favicon
+});
+
 // Serve files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
