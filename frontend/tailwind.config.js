@@ -1,4 +1,8 @@
 // tailwind.config.js
+import typography from '@tailwindcss/typography';
+import forms from '@tailwindcss/forms';
+import aspectRatio from '@tailwindcss/aspect-ratio';
+
 export default {
   content: [
     "./index.html",
@@ -18,10 +22,8 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio')
+    typography,
+    forms,
+    aspectRatio
   ],
 };
-
-
