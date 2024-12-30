@@ -39,6 +39,15 @@ app.use("/api/servers", serverRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/data", dataRoutes);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Backend Error:", err.message);  // Logs error to the server console
+  res.status(500).json({
+    success: false,
+    message: err.message || "Something went wrong on the server!",
+  });
+});
+
 app.listen(port, () => {
     connectDB();
     console.log(`Server started at http://localhost:${port}`);
