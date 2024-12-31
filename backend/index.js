@@ -16,18 +16,24 @@ const port = process.env.PORT || 1444;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
+// Allowed origins for CORS
 const allowedOrigins = ["https://email-now-ku6l.vercel.app", "https://email-now-eight.vercel.app"];
+
+// CORS middleware configuration
 app.use(cors({
   origin: function (origin, callback) {
+    // If no origin is provided (e.g., for local requests), allow it
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
-  }
+  },
+  methods: ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  preflightContinue: false, // Ensures preflight OPTIONS request is handled automatically
+  optionsSuccessStatus: 200 // Set to 200 for successful preflight response
 }));
-
 
 // Serve files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -50,6 +56,12 @@ app.get("/test", (req, res) => {
     res.send("Backend is working!");
 });
 
+// Handle OPTIONS requests explicitly (for CORS preflight)
+app.options('*', (req, res) => {
+  res.sendStatus(200); // Respond with a 200 status for OPTIONS requests
+});
+
+// Start the server
 app.listen(port, () => {
     connectDB();
     console.log(`Server started at http://localhost:${port}`);
