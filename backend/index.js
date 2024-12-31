@@ -17,8 +17,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-// Use CORS with the defined options
-app.use(cors());
+const allowedOrigins = ["https://email-now-ku6l.vercel.app", "https://email-now-eight.vercel.app"];
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
+}));
+
 
 // Serve files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
