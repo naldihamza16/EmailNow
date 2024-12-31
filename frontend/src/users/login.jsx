@@ -25,7 +25,7 @@ const Login = ({ setIsAuthenticated }) => {
     try {
       console.log("Submitting:", formData);
 
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_URL}api/users/login`, {
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_URL}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
