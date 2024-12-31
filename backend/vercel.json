@@ -12,8 +12,8 @@
     ],
     "routes": [
       {
-      "src": "/(.*)",
-      "dest": "/",
+      "src": "/api/(.*)",
+      "dest": "/api/",
       "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
       "headers": {
         "Access-Control-Allow-Origin": "https://email-now-ku6l.vercel.app",
