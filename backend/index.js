@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 
 // CORS configuration
 const corsOptions = {
-    origin: "*",
+    origin: ["https://email-now-ku6l.vercel.app", "https://email-now-eight.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 };
