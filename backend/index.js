@@ -19,9 +19,9 @@ const __dirname = path.dirname(__filename);
 
 // CORS configuration
 const corsOptions = {
-    origin: ["https://email-now-lqko.vercel.app"], // Add allowed origins
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
-    credentials: true, // Allow cookies or authentication headers
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
 };
 
 // Use CORS with the defined options
