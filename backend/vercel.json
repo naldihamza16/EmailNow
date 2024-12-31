@@ -16,9 +16,7 @@
       "dest": "/api/",
       "methods": ["OPTIONS", "GET", "POST", "PUT", "DELETE"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://email-now-ku6l.vercel.app",
-        "Access-Control-Allow-Methods": "OPTIONS, GET, POST, PUT, DELETE",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        "Access-Control-Allow-Origin": "*"
       }
       }
     ]
