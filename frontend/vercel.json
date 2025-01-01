@@ -1,21 +1,3 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://email-now-eight.vercel.app/api/$1" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript" }
-      ]
-    }
-  ]
+    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
-
