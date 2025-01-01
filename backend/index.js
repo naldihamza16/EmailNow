@@ -35,16 +35,6 @@ app.use("/api/servers", serverRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/data", dataRoutes);
 
-// Error handling middleware
-app.get("/test", (req, res) => {
-    res.send("Backend is working!");
-});
-
-// Handle OPTIONS requests explicitly (for CORS preflight)
-app.options('*', (req, res) => {
-  res.sendStatus(200); // Respond with a 200 status for OPTIONS requests
-});
-
 // Start the server
 app.listen(port, () => {
     connectDB();
